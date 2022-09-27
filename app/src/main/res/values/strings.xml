@@ -34,11 +34,30 @@
     <string name="err_enter_title">Please enter title</string>
     <string name="err_select_location">Please select location</string>
 
+    <string name="add_location_button_description">Add location button</string>
+    <string name="logout_error">Please login first</string>
+    <string name="login_error">You\'re already logged in</string>
+
+    <string name="login_success">You\'re logged in successfully</string>
+    <string name="logout_success">You\'re logged out successfully</string>
+
+    <string name="poi_message">Kindly select your POI on the map</string>
+
+    <string name="unknown_geofence_error">
+        Unknown error: the Geofence service is not available now
+    </string>
+    <string name="geofences_removed">Geofences removed.</string>
+    <string name="geofences_not_removed">Geofences not removed.</string>
+
     <!-- Error strings -->
     <string name="geofence_unknown_error">Unknown error: the Geofence service is not available now.</string>
     <string name="geofence_not_available">Geofence service is not available now. Go to Settings>Location>Mode and choose High accuracy.</string>
     <string name="geofence_too_many_geofences">Your app has registered too many geofences.</string>
     <string name="geofence_too_many_pending_intents">You have provided too many PendingIntents to the addGeofences() call.</string>
     <string name="error_adding_geofence">Error Happened, Can\'t Add Geofence</string>
+    <string name="success_adding_geofence">Geofence added</string>
     <string name="google_maps_key">GOOGLE_MAPS_API_KEY</string>
+    <string name="location">Location:</string>
+    <string name="title">Title:</string>
+    <string name="description">Description:</string>
 </resources>

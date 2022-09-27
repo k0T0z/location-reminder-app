@@ -1,6 +1,7 @@
 package com.udacity.project4.locationreminders.reminderslist
 
 import android.app.Application
+import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.udacity.project4.base.BaseViewModel
@@ -40,6 +41,7 @@ class RemindersListViewModel(
                             reminder.id
                         )
                     })
+                    Log.d("data items" , "items count: ${dataList.size}")
                     remindersList.value = dataList
                 }
                 is Result.Error ->

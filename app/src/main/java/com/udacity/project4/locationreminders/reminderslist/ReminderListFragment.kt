@@ -1,12 +1,20 @@
 package com.udacity.project4.locationreminders.reminderslist
 
+import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.*
+import android.widget.Toast
 import androidx.databinding.DataBindingUtil
+import androidx.navigation.fragment.findNavController
+import com.firebase.ui.auth.AuthUI
+import com.google.firebase.auth.FirebaseAuth
 import com.udacity.project4.R
+import com.udacity.project4.authentication.AuthenticationActivity
 import com.udacity.project4.base.BaseFragment
 import com.udacity.project4.base.NavigationCommand
 import com.udacity.project4.databinding.FragmentRemindersBinding
+import com.udacity.project4.locationreminders.ReminderDescriptionActivity
 import com.udacity.project4.utils.setDisplayHomeAsUpEnabled
 import com.udacity.project4.utils.setTitle
 import com.udacity.project4.utils.setup
@@ -31,7 +39,11 @@ class ReminderListFragment : BaseFragment() {
         setDisplayHomeAsUpEnabled(false)
         setTitle(getString(R.string.app_name))
 
-        binding.refreshLayout.setOnRefreshListener { _viewModel.loadReminders() }
+
+        binding.refreshLayout.setOnRefreshListener {
+            Log.d("data items" , "refresh listener")
+            _viewModel.loadReminders()
+        }
 
         return binding.root
     }
@@ -48,6 +60,7 @@ class ReminderListFragment : BaseFragment() {
     override fun onResume() {
         super.onResume()
         //load the reminders list on the ui
+        Log.d("data items" , "view model")
         _viewModel.loadReminders()
     }
 
@@ -63,15 +76,43 @@ class ReminderListFragment : BaseFragment() {
     private fun setupRecyclerView() {
         val adapter = RemindersListAdapter {
         }
-
 //        setup the recycler view using the extension function
         binding.reminderssRecyclerView.setup(adapter)
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        val intent = Intent(activity, AuthenticationActivity::class.java)
         when (item.itemId) {
             R.id.logout -> {
-//                TODO: add the logout implementation
+                if (FirebaseAuth.getInstance().currentUser != null) {
+                    activity?.let {
+                        AuthUI.getInstance().signOut(it)
+                        Toast.makeText(it,R.string.logout_success, Toast.LENGTH_SHORT).show()
+                    }
+                }
+                else {
+                    activity?.let {
+                        Toast.makeText(
+                            it,
+                            R.string.logout_error,
+                            Toast.LENGTH_SHORT
+                        ).show()
+                    }
+                }
+            }
+            R.id.login -> {
+                if (FirebaseAuth.getInstance().currentUser == null) {
+                    startActivity(intent)
+                }
+                else {
+                    activity?.let {
+                        Toast.makeText(
+                            it,
+                            R.string.login_error,
+                            Toast.LENGTH_SHORT
+                        ).show()
+                    }
+                }
             }
         }
         return super.onOptionsItemSelected(item)
