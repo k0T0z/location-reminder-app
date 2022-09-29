@@ -3,6 +3,7 @@ package com.udacity.project4.locationreminders.savereminder
 import android.Manifest
 import android.annotation.SuppressLint
 import android.annotation.TargetApi
+import android.app.Activity
 import android.app.PendingIntent
 import android.content.Intent
 import android.content.IntentSender
@@ -14,10 +15,11 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.core.app.ActivityCompat
+import androidx.core.app.ActivityCompat.startIntentSenderForResult
 import androidx.databinding.DataBindingUtil
+import androidx.fragment.app.Fragment
 import com.google.android.gms.common.api.ResolvableApiException
 import com.google.android.gms.location.*
-import com.google.android.gms.maps.model.LatLng
 import com.google.android.material.snackbar.Snackbar
 import com.udacity.project4.R
 import com.udacity.project4.authentication.AuthenticationActivity.Companion.TAG
@@ -132,12 +134,19 @@ class SaveReminderFragment : BaseFragment() {
         locationSettingsResponseTask?.addOnFailureListener { exception ->
             if (exception is ResolvableApiException && resolve) {
                 try {
-                    activity?.let {
-                        exception.startResolutionForResult(
-                            it,
-                            REQUEST_TURN_DEVICE_LOCATION_ON
-                        )
-                    }
+//                        exception.startResolutionForResult(
+//                            it,
+//                            REQUEST_TURN_DEVICE_LOCATION_ON
+//                        )
+                    startIntentSenderForResult(
+                        exception.resolution.intentSender,
+                        REQUEST_TURN_DEVICE_LOCATION_ON,
+                        null,
+                        0,
+                        0,
+                        0,
+                        null
+                    )
                 } catch (sendEx: IntentSender.SendIntentException) {
                     Log.d(
                         com.udacity.project4.locationreminders.savereminder.TAG,
@@ -155,13 +164,13 @@ class SaveReminderFragment : BaseFragment() {
         }
         locationSettingsResponseTask?.addOnCompleteListener {
             if (it.isSuccessful) {
-                addGeofence()
+                addGeofenceForReminder()
             }
         }
     }
 
     @SuppressLint("MissingPermission")
-    private fun addGeofence() {
+    private fun addGeofenceForReminder() {
         val currentGeofenceData = reminder
 
         val geofence = Geofence.Builder()
@@ -171,7 +180,7 @@ class SaveReminderFragment : BaseFragment() {
                 currentGeofenceData.longitude!!,
                 GeofencingConstants.GEOFENCE_RADIUS_IN_METERS
             )
-            .setExpirationDuration(GeofencingConstants.GEOFENCE_EXPIRATION_IN_MILLISECONDS)
+            .setExpirationDuration(Geofence.NEVER_EXPIRE)
             .setTransitionTypes(Geofence.GEOFENCE_TRANSITION_ENTER)
             .build()
 
@@ -202,7 +211,6 @@ class SaveReminderFragment : BaseFragment() {
                 }
             }
         }
-
     }
 
     @TargetApi(29)
@@ -245,19 +253,20 @@ class SaveReminderFragment : BaseFragment() {
         }
 
         Log.d(TAG, "Request foreground only location permission")
-        activity?.let {
-            ActivityCompat.requestPermissions(
-                it,
-                permissionsArray,
-                resultCode
-            )
-        }
+//            ActivityCompat.requestPermissions(
+//                it,
+//                permissionsArray,
+//                resultCode
+//            )
+        requestPermissions(
+            permissionsArray,
+            resultCode
+        )
     }
 
     override fun onDestroy() {
         super.onDestroy()
         //make sure to clear the view model after destroy, as it's a single view model.
-//        removeGeofences()
         _viewModel.onClear()
     }
 

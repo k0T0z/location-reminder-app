@@ -43,6 +43,8 @@
 
     <string name="poi_message">Kindly select your POI on the map</string>
 
+    <string name="random_location">Random Location</string>
+
     <string name="unknown_geofence_error">
         Unknown error: the Geofence service is not available now
     </string>

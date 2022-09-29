@@ -62,7 +62,9 @@ class AuthenticationActivity : AppCompatActivity() {
                 AuthenticationState.AUTHENTICATED -> {
                     startActivity(intent)
                 }
-                else -> {}
+                else -> {
+
+                }
             }
         })
 

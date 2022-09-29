@@ -42,7 +42,7 @@ class SelectLocationFragment : BaseFragment(), OnMapReadyCallback {
     override val _viewModel: SaveReminderViewModel by inject()
     private lateinit var binding: FragmentSelectLocationBinding
     private lateinit var map: GoogleMap
-    private lateinit var poi: PointOfInterest
+    private var poi: PointOfInterest? = null
     private lateinit var latLang: LatLng
     private lateinit var title: String
 
@@ -93,10 +93,17 @@ class SelectLocationFragment : BaseFragment(), OnMapReadyCallback {
     }
 
 
+    @Deprecated(
+        "Deprecated in Java", ReplaceWith(
+            "inflater.inflate(R.menu.map_options, menu)",
+            "com.udacity.project4.R"
+        )
+    )
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         inflater.inflate(R.menu.map_options, menu)
     }
 
+    @Deprecated("Deprecated in Java")
     override fun onOptionsItemSelected(item: MenuItem) = when (item.itemId) {
         // TODO: Change the map type based on the user's selection.
         R.id.normal_map -> {
@@ -119,7 +126,7 @@ class SelectLocationFragment : BaseFragment(), OnMapReadyCallback {
     }
 
     override fun onMapReady(googleMap: GoogleMap) {
-        Toast.makeText(activity,R.string.poi_message, Toast.LENGTH_LONG).show()
+        Toast.makeText(activity, R.string.poi_message, Toast.LENGTH_LONG).show()
         map = googleMap
 //        val userLocation = LatLng(-34.0, 151.0)
 //        val zoomLevel = 15f
@@ -147,11 +154,15 @@ class SelectLocationFragment : BaseFragment(), OnMapReadyCallback {
                     .snippet(snippet)
 
             )
+            this.latLang = latLng
+            this.title = getString(R.string.random_location)
+            binding.savePoiButton.visibility = VISIBLE
         }
     }
 
     private fun setPoiClick(map: GoogleMap) {
         map.setOnPoiClickListener { poi ->
+            map.clear()
             val poiMarker = map.addMarker(
                 MarkerOptions()
                     .position(poi.latLng)
@@ -184,11 +195,12 @@ class SelectLocationFragment : BaseFragment(), OnMapReadyCallback {
         }
     }
 
-    private fun isPermissionGranted() : Boolean {
+    private fun isPermissionGranted(): Boolean {
         return activity?.let {
             ContextCompat.checkSelfPermission(
                 it,
-                Manifest.permission.ACCESS_FINE_LOCATION)
+                Manifest.permission.ACCESS_FINE_LOCATION
+            )
         } == PackageManager.PERMISSION_GRANTED
     }
 
@@ -196,22 +208,24 @@ class SelectLocationFragment : BaseFragment(), OnMapReadyCallback {
     private fun enableMyLocation() {
         if (isPermissionGranted()) {
             map.isMyLocationEnabled = true
-        }
-        else {
-            activity?.let {
-                ActivityCompat.requestPermissions(
-                    it,
-                    arrayOf<String>(Manifest.permission.ACCESS_FINE_LOCATION),
-                    REQUEST_LOCATION_PERMISSION
-                )
-            }
+        } else {
+//                ActivityCompat.requestPermissions(
+//                    it,
+//                    arrayOf<String>(Manifest.permission.ACCESS_FINE_LOCATION),
+//                    REQUEST_LOCATION_PERMISSION
+//                )
+            requestPermissions(
+                arrayOf<String>(Manifest.permission.ACCESS_FINE_LOCATION),
+                REQUEST_LOCATION_PERMISSION
+            )
         }
     }
 
     override fun onRequestPermissionsResult(
         requestCode: Int,
         permissions: Array<String>,
-        grantResults: IntArray) {
+        grantResults: IntArray
+    ) {
         if (requestCode == REQUEST_LOCATION_PERMISSION) {
             if (grantResults.isNotEmpty() && (grantResults[0] == PackageManager.PERMISSION_GRANTED)) {
                 enableMyLocation()
