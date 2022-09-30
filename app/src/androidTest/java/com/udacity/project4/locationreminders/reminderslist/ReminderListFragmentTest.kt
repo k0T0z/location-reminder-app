@@ -13,5 +13,4 @@ class ReminderListFragmentTest {
     val activeReminder = ReminderDTO("Title1", "Description1", "cairo", 30.0, 30.0)
 
 
-
 }

@@ -27,12 +27,12 @@ class FakeTestRepository : RemindersRepository {
         remindersServiceData.clear()
     }
 
-//    fun addReminders(vararg reminders: ReminderDTO) {
-//        for (reminder in reminders) {
-//            remindersServiceData[reminder.id] = reminder
-//        }
-//        runBlocking {
-//            observableReminders.value = getReminders()
-//        }
-//    }
+    fun addReminders(vararg reminders: ReminderDTO) {
+        for (reminder in reminders) {
+            remindersServiceData[reminder.id] = reminder
+        }
+        runBlocking {
+            observableReminders.value = getReminders()
+        }
+    }
 }

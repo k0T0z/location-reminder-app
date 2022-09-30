@@ -1,5 +1,6 @@
 package com.udacity.project4.locationreminders.data.local
 
+import com.udacity.project4.data.FakeDataSource
 import com.udacity.project4.data.FakeTestRepository
 import com.udacity.project4.locationreminders.data.dto.ReminderDTO
 import com.udacity.project4.locationreminders.data.dto.Result
@@ -11,28 +12,24 @@ import org.junit.Before
 import org.junit.Test
 
 @ExperimentalCoroutinesApi
-class RemindersLocalRepositoryTest {
+class RemindersLocalDataSourceTest {
     private val reminder1 = ReminderDTO("Title1", "Description1", "cairo", 30.0, 30.0)
     private val reminder2 = ReminderDTO("Title2", "Description2", "cairo", 30.0, 30.0)
     private val reminder3 = ReminderDTO("Title3", "Description3", "cairo", 30.0, 30.0)
     private val localReminders = listOf(reminder1, reminder2, reminder3)
 
     // Class under test
-    private lateinit var remindersRepository: FakeTestRepository
+    private lateinit var remindersDataSource: FakeDataSource
 
     @Before
-    fun createRepository() {
-        remindersRepository = FakeTestRepository()
+    fun createDataSource() {
+        remindersDataSource = FakeDataSource(localReminders.toMutableList())
     }
 
 
     @Test
     fun getTasks_requestsAllTasksFromRemoteDataSource() = runBlockingTest {
-        remindersRepository.saveReminder(reminder1)
-        remindersRepository.saveReminder(reminder2)
-        remindersRepository.saveReminder(reminder3)
-        val reminders = remindersRepository.getReminders() as Result.Success
+        val reminders = remindersDataSource.getReminders() as Result.Success
         assertThat(reminders.data.toList(), IsEqual(localReminders))
     }
-
 }
