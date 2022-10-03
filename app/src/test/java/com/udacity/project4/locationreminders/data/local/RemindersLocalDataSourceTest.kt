@@ -1,7 +1,6 @@
 package com.udacity.project4.locationreminders.data.local
 
-import com.udacity.project4.data.FakeDataSource
-import com.udacity.project4.data.FakeTestRepository
+import com.udacity.project4.locationreminders.data.FakeDataSource
 import com.udacity.project4.locationreminders.data.dto.ReminderDTO
 import com.udacity.project4.locationreminders.data.dto.Result
 import kotlinx.coroutines.ExperimentalCoroutinesApi

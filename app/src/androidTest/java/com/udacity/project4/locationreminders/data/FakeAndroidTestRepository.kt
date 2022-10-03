@@ -1,4 +1,4 @@
-package com.udacity.project4.data
+package com.udacity.project4.locationreminders.data
 
 import androidx.lifecycle.MutableLiveData
 import com.udacity.project4.locationreminders.data.dto.ReminderDTO
@@ -6,12 +6,21 @@ import com.udacity.project4.locationreminders.data.dto.Result
 import com.udacity.project4.locationreminders.data.local.RemindersRepository
 import kotlinx.coroutines.runBlocking
 
-class FakeTestRepository : RemindersRepository {
+class FakeAndroidTestRepository : RemindersRepository {
+
+    private var shouldReturnError = false
 
     var remindersServiceData: LinkedHashMap<String, ReminderDTO> = LinkedHashMap()
     private val observableReminders = MutableLiveData<Result<List<ReminderDTO>>>()
 
+    fun setReturnError(value: Boolean) {
+        shouldReturnError = value
+    }
+
     override suspend fun getReminders(): Result<List<ReminderDTO>> {
+        if (shouldReturnError) {
+            return Result.Error("Test exception")
+        }
         return Result.Success(remindersServiceData.values.toList())
     }
 
@@ -20,6 +29,9 @@ class FakeTestRepository : RemindersRepository {
     }
 
     override suspend fun getReminder(id: String): Result<ReminderDTO> {
+        if (shouldReturnError) {
+            return Result.Error("Test exception")
+        }
         return Result.Success(remindersServiceData[id] as ReminderDTO)
     }
 
