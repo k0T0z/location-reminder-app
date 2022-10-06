@@ -1,6 +1,7 @@
 package com.udacity.project4.locationreminders
 
 import android.app.Application
+import android.app.PendingIntent.getActivity
 import androidx.test.core.app.ActivityScenario
 import androidx.test.core.app.ApplicationProvider.getApplicationContext
 import androidx.test.espresso.Espresso
@@ -10,6 +11,7 @@ import androidx.test.espresso.action.ViewActions.*
 import androidx.test.espresso.assertion.ViewAssertions
 import androidx.test.espresso.assertion.ViewAssertions.doesNotExist
 import androidx.test.espresso.assertion.ViewAssertions.matches
+import androidx.test.espresso.matcher.RootMatchers
 import androidx.test.espresso.matcher.ViewMatchers
 import androidx.test.espresso.matcher.ViewMatchers.*
 import androidx.test.ext.junit.runners.AndroidJUnit4
@@ -25,6 +27,8 @@ import com.udacity.project4.locationreminders.savereminder.SaveReminderViewModel
 import com.udacity.project4.monitorActivity
 import com.udacity.project4.utils.EspressoIdlingResource
 import kotlinx.coroutines.runBlocking
+import org.hamcrest.core.Is.`is`
+import org.hamcrest.core.IsNot.not
 import org.junit.After
 import org.junit.Before
 import org.junit.Test
@@ -111,7 +115,7 @@ class RemindersActivityTest :
     }
 
     @Test
-    fun end_to_end() = runBlocking {
+    fun saveReminder_addReminder_saveReminder() = runBlocking {
         reminderDataSource.saveReminder(reminder1)
         reminderDataSource.saveReminder(reminder2)
         reminderDataSource.saveReminder(reminder3)
@@ -142,6 +146,90 @@ class RemindersActivityTest :
 
         onView(withText("test title")).check(matches(isDisplayed()))
         onView(withText("test description")).check(matches(isDisplayed()))
+        onView(withText(R.string.random_location)).check(matches(isDisplayed()))
+
+        activityScenario.close()
+    }
+
+    @Test
+    fun addReminder_saveReminder_titleErrorSnackbar() {
+        val activityScenario = ActivityScenario.launch(RemindersActivity::class.java)
+        dataBindingIdlingResource.monitorActivity(activityScenario)
+
+        onView(withId(R.id.addReminderFAB)).perform(click())
+        onView(withId(R.id.saveReminder)).perform(click())
+
+        onView(withId(com.google.android.material.R.id.snackbar_text))
+            .check(matches(withText(R.string.err_enter_title)))
+
+        activityScenario.close()
+    }
+
+    @Test
+    fun addReminder_saveReminder_locationErrorSnackbar() {
+        val activityScenario = ActivityScenario.launch(RemindersActivity::class.java)
+        dataBindingIdlingResource.monitorActivity(activityScenario)
+
+        onView(withId(R.id.addReminderFAB)).perform(click())
+        onView(withId(R.id.reminderTitle)).perform(replaceText("test title"))
+        onView(withId(R.id.saveReminder)).perform(click())
+
+        onView(withId(com.google.android.material.R.id.snackbar_text))
+            .check(matches(withText(R.string.err_select_location)))
+
+        onView(withId(R.id.selectLocation)).perform(click())
+        onView(withId(R.id.map)).perform(longClick())
+        onView(withId(R.id.save_poi_button)).perform(click())
+        onView(withId(R.id.saveReminder)).perform(click())
+
+        onView(withText("test title")).check(matches(isDisplayed()))
+        onView(withText(R.string.random_location)).check(matches(isDisplayed()))
+
+        activityScenario.close()
+    }
+
+    @Test
+    fun addReminder_saveReminder_reminderSavedToast() {
+        val activityScenario = ActivityScenario.launch(RemindersActivity::class.java)
+        dataBindingIdlingResource.monitorActivity(activityScenario)
+
+        onView(withId(R.id.addReminderFAB)).perform(click())
+        onView(withId(R.id.reminderTitle)).perform(replaceText("test title"))
+        onView(withId(R.id.selectLocation)).perform(click())
+        onView(withId(R.id.map)).perform(longClick())
+        onView(withId(R.id.save_poi_button)).perform(click())
+        onView(withId(R.id.saveReminder)).perform(click())
+
+        activityScenario.onActivity {
+            onView(withText(R.string.success_adding_geofence)).inRoot(
+                RootMatchers.withDecorView(
+                    not(
+                        `is`(
+                            it.window.decorView
+                        )
+                    )
+                )
+            ).check(
+                matches(
+                    isDisplayed()
+                )
+            )
+            onView(withText(R.string.reminder_saved)).inRoot(
+                RootMatchers.withDecorView(
+                    not(
+                        `is`(
+                            it.window.decorView
+                        )
+                    )
+                )
+            ).check(
+                matches(
+                    isDisplayed()
+                )
+            )
+        }
+
+        onView(withText("test title")).check(matches(isDisplayed()))
         onView(withText(R.string.random_location)).check(matches(isDisplayed()))
 
         activityScenario.close()

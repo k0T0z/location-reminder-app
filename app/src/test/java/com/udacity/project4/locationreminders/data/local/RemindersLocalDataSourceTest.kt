@@ -27,7 +27,7 @@ class RemindersLocalDataSourceTest {
 
 
     @Test
-    fun getTasks_requestsAllTasksFromRemoteDataSource() = runBlockingTest {
+    fun getReminders_requestsAllRemindersFromLocalDataSource() = runBlockingTest {
         val reminders = remindersDataSource.getReminders() as Result.Success
         assertThat(reminders.data.toList(), IsEqual(localReminders))
     }

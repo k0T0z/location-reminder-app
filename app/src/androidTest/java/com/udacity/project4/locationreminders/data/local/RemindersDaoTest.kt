@@ -36,6 +36,9 @@ class RemindersDaoTest {
         ).build()
     }
 
+    @After
+    fun closeDb() = database.close()
+
     @Test
     fun insertReminderAndGetById() = runBlockingTest {
         val reminder1 = ReminderDTO("Title1", "Description1", "cairo", 30.0, 30.0)
@@ -51,18 +54,4 @@ class RemindersDaoTest {
         assertThat(loaded.latitude, `is`(reminder1.latitude))
         assertThat(loaded.longitude, `is`(reminder1.longitude))
     }
-
-//    @Test
-//    fun insertReminderAndError() = runBlockingTest {
-//        val id: String = UUID.randomUUID().toString()
-//
-//        val loaded = database.reminderDao().getReminderById(id)
-//
-//        assertThat<ReminderDTO>(loaded as ReminderDTO, nullValue())
-//    }
-
-    @After
-    fun closeDb() = database.close()
-
-
 }
