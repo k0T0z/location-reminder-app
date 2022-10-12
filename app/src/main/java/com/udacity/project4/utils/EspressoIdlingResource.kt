@@ -1,5 +1,6 @@
 package com.udacity.project4.utils
 
+import android.view.View
 import androidx.test.espresso.idling.CountingIdlingResource
 
 object EspressoIdlingResource {
@@ -19,6 +20,21 @@ object EspressoIdlingResource {
         }
     }
 }
+
+//object EspressoIdlingResourceToast {
+//    val idlingResource = CountingIdlingResource("toast")
+//
+//    val listener: View.OnAttachStateChangeListener =
+//        object : View.OnAttachStateChangeListener {
+//            override fun onViewAttachedToWindow(v: View) {
+//                EspressoIdlingResourceToast.idlingResource.increment()
+//            }
+//
+//            override fun onViewDetachedFromWindow(v: View) {
+//                EspressoIdlingResourceToast.idlingResource.decrement()
+//            }
+//        }
+//}
 
 inline fun <T> wrapEspressoIdlingResource(function: () -> T): T {
     // Espresso does not work well with coroutines yet. See

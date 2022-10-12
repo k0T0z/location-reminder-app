@@ -1,7 +1,11 @@
 package com.udacity.project4.locationreminders
 
+import android.app.Activity
 import android.app.Application
 import android.app.PendingIntent.getActivity
+import android.util.Log
+import androidx.navigation.NavController
+import androidx.navigation.Navigation
 import androidx.test.core.app.ActivityScenario
 import androidx.test.core.app.ApplicationProvider.getApplicationContext
 import androidx.test.espresso.Espresso
@@ -12,6 +16,7 @@ import androidx.test.espresso.assertion.ViewAssertions
 import androidx.test.espresso.assertion.ViewAssertions.doesNotExist
 import androidx.test.espresso.assertion.ViewAssertions.matches
 import androidx.test.espresso.matcher.RootMatchers
+import androidx.test.espresso.matcher.RootMatchers.withDecorView
 import androidx.test.espresso.matcher.ViewMatchers
 import androidx.test.espresso.matcher.ViewMatchers.*
 import androidx.test.ext.junit.runners.AndroidJUnit4
@@ -26,7 +31,9 @@ import com.udacity.project4.locationreminders.reminderslist.RemindersListViewMod
 import com.udacity.project4.locationreminders.savereminder.SaveReminderViewModel
 import com.udacity.project4.monitorActivity
 import com.udacity.project4.utils.EspressoIdlingResource
+//import com.udacity.project4.utils.EspressoIdlingResourceToast
 import kotlinx.coroutines.runBlocking
+import org.hamcrest.CoreMatchers
 import org.hamcrest.core.Is.`is`
 import org.hamcrest.core.IsNot.not
 import org.junit.After
@@ -39,6 +46,8 @@ import org.koin.core.context.stopKoin
 import org.koin.dsl.module
 import org.koin.test.AutoCloseKoinTest
 import org.koin.test.get
+import org.mockito.Mockito.mock
+import kotlin.concurrent.thread
 
 @RunWith(AndroidJUnit4::class)
 @LargeTest
@@ -103,6 +112,7 @@ class RemindersActivityTest :
     fun registerIdlingResource() {
         IdlingRegistry.getInstance().register(EspressoIdlingResource.countingIdlingResource)
         IdlingRegistry.getInstance().register(dataBindingIdlingResource)
+//        IdlingRegistry.getInstance().register(EspressoIdlingResourceToast.idlingResource)
     }
 
     /**
@@ -112,6 +122,7 @@ class RemindersActivityTest :
     fun unregisterIdlingResource() {
         IdlingRegistry.getInstance().unregister(EspressoIdlingResource.countingIdlingResource)
         IdlingRegistry.getInstance().unregister(dataBindingIdlingResource)
+//        IdlingRegistry.getInstance().unregister(EspressoIdlingResourceToast.idlingResource)
     }
 
     @Test
@@ -189,45 +200,37 @@ class RemindersActivityTest :
     }
 
     @Test
-    fun addReminder_saveReminder_reminderSavedToast() {
+    fun addReminder_saveReminder_toast() {
         val activityScenario = ActivityScenario.launch(RemindersActivity::class.java)
         dataBindingIdlingResource.monitorActivity(activityScenario)
 
         onView(withId(R.id.addReminderFAB)).perform(click())
+
+        onView(withText(R.string.add_reminder)).inRoot(ToastMatcher()).check(matches(isDisplayed()))
+
         onView(withId(R.id.reminderTitle)).perform(replaceText("test title"))
+
+        // wait until the first toast disappears
+        Thread.sleep(3000)
+
         onView(withId(R.id.selectLocation)).perform(click())
+
+        onView(withText(R.string.poi_message)).inRoot(ToastMatcher()).check(matches(isDisplayed()))
+
         onView(withId(R.id.map)).perform(longClick())
+
+        // wait until the second toast disappears
+        Thread.sleep(3000)
+
         onView(withId(R.id.save_poi_button)).perform(click())
         onView(withId(R.id.saveReminder)).perform(click())
 
-        activityScenario.onActivity {
-            onView(withText(R.string.success_adding_geofence)).inRoot(
-                RootMatchers.withDecorView(
-                    not(
-                        `is`(
-                            it.window.decorView
-                        )
-                    )
-                )
-            ).check(
-                matches(
-                    isDisplayed()
-                )
-            )
-            onView(withText(R.string.reminder_saved)).inRoot(
-                RootMatchers.withDecorView(
-                    not(
-                        `is`(
-                            it.window.decorView
-                        )
-                    )
-                )
-            ).check(
-                matches(
-                    isDisplayed()
-                )
-            )
-        }
+        onView(withText(R.string.success_adding_geofence)).inRoot(ToastMatcher()).check(matches(isDisplayed()))
+
+        // wait until the third toast disappears
+        Thread.sleep(3000)
+
+        onView(withText(R.string.reminder_saved)).inRoot(ToastMatcher()).check(matches(isDisplayed()))
 
         onView(withText("test title")).check(matches(isDisplayed()))
         onView(withText(R.string.random_location)).check(matches(isDisplayed()))

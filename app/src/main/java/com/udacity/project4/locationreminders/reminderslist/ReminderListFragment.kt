@@ -53,6 +53,7 @@ class ReminderListFragment : BaseFragment() {
         binding.lifecycleOwner = this
         setupRecyclerView()
         binding.addReminderFAB.setOnClickListener {
+            Toast.makeText(activity, R.string.add_reminder, Toast.LENGTH_SHORT).show()
             navigateToAddReminder()
         }
     }

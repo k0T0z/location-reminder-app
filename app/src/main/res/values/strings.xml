@@ -52,6 +52,8 @@
     <string name="geofences_removed">Geofences removed.</string>
     <string name="geofences_not_removed">Geofences not removed.</string>
 
+    <string name="add_reminder">Please enter title and select location for your reminder</string>
+
     <!-- Error strings -->
     <string name="geofence_unknown_error">Unknown error: the Geofence service is not available now.</string>
     <string name="geofence_not_available">Geofence service is not available now. Go to Settings>Location>Mode and choose High accuracy.</string>

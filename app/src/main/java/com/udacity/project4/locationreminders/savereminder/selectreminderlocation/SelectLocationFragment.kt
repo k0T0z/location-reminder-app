@@ -157,7 +157,6 @@ class SelectLocationFragment : BaseFragment(), OnMapReadyCallback {
                     .position(latLng)
                     .title(getString(R.string.dropped_pin))
                     .snippet(snippet)
-
             )
             this.latLang = latLng
             this.title = getString(R.string.random_location)

@@ -17,9 +17,8 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.core.app.ActivityCompat
-import androidx.core.app.ActivityCompat.startIntentSenderForResult
 import androidx.databinding.DataBindingUtil
-import androidx.fragment.app.Fragment
+import androidx.test.espresso.idling.CountingIdlingResource
 import com.google.android.gms.common.api.ResolvableApiException
 import com.google.android.gms.location.*
 import com.google.android.material.snackbar.Snackbar
@@ -32,7 +31,9 @@ import com.udacity.project4.databinding.FragmentSaveReminderBinding
 import com.udacity.project4.locationreminders.geofence.GeofenceBroadcastReceiver
 import com.udacity.project4.locationreminders.geofence.GeofencingConstants
 import com.udacity.project4.locationreminders.reminderslist.ReminderDataItem
+//import com.udacity.project4.utils.EspressoIdlingResourceToast
 import com.udacity.project4.utils.setDisplayHomeAsUpEnabled
+import com.udacity.project4.utils.wrapEspressoIdlingResource
 import org.koin.android.ext.android.inject
 
 private const val REQUEST_FOREGROUND_AND_BACKGROUND_PERMISSION_RESULT_CODE = 33
@@ -113,8 +114,7 @@ class SaveReminderFragment : BaseFragment() {
         if (requestCode == REQUEST_TURN_DEVICE_LOCATION_ON) {
             if (requestCode == Activity.RESULT_OK) {
                 addGeofenceForReminder()
-            }
-            else {
+            } else {
                 checkDeviceLocationSettingsAndStartGeofence(false)
             }
         }
@@ -202,10 +202,12 @@ class SaveReminderFragment : BaseFragment() {
                 Toast.makeText(
                     activity, R.string.success_adding_geofence,
                     Toast.LENGTH_SHORT
-                )
-                    .show()
+                ).show()
+//                toast.view?.addOnAttachStateChangeListener(EspressoIdlingResourceToast.listener)
+//                toast.show()
                 Log.e("Add Geofence", geofence.requestId)
                 _viewModel.saveReminder(currentGeofenceData)
+
             }
             addOnFailureListener {
                 // Failed to add geofences.
@@ -280,11 +282,11 @@ class SaveReminderFragment : BaseFragment() {
 
         if (
             (grantResults.isEmpty() ||
-            grantResults[LOCATION_PERMISSION_INDEX] == PackageManager.PERMISSION_DENIED) ||
+                    grantResults[LOCATION_PERMISSION_INDEX] == PackageManager.PERMISSION_DENIED) ||
             (requestCode == REQUEST_FOREGROUND_AND_BACKGROUND_PERMISSION_RESULT_CODE &&
                     grantResults[BACKGROUND_LOCATION_PERMISSION_INDEX] ==
-                    PackageManager.PERMISSION_DENIED))
-        {
+                    PackageManager.PERMISSION_DENIED)
+        ) {
             Snackbar.make(
                 binding.saveReminderFragment,
                 R.string.permission_denied_explanation_geofence, Snackbar.LENGTH_INDEFINITE
