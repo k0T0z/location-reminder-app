@@ -190,6 +190,9 @@ class RemindersActivityTest :
 
         onView(withId(R.id.selectLocation)).perform(click())
         onView(withId(R.id.map)).perform(longClick())
+
+        Thread.sleep(3000)
+
         onView(withId(R.id.save_poi_button)).perform(click())
         onView(withId(R.id.saveReminder)).perform(click())
 
