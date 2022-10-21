@@ -42,9 +42,11 @@ Explain what each test does and why
 
 ```
 1.androidTest
-        //TODO: Students explain their testing here.
+   Full app test using end to end tests
 2. test
-        //TODO: Students explain their testing here.
+   Full view models testing
+   Full live data tesing
+   Data sources like DB and Repository testing using a Fake
 ```
 
 ## Project Instructions
