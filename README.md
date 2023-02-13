@@ -2,6 +2,13 @@
 
 A Todo list app with location reminders that remind the user to do something when he reaches a specific location. The app will require the user to create an account and login to set and access reminders.
 
+## Screenshots
+
+![screen-shot-2020-06-08-at-5 20 13-pm](https://user-images.githubusercontent.com/74428638/218548507-ac7d0906-5c27-482d-aea6-1fd2e3bd28cc.png)
+![screen-shot-2020-06-08-at-5 20 42-pm](https://user-images.githubusercontent.com/74428638/218548521-b3c8c4ff-395c-4eae-b0b3-d3ff26e5cd2d.png)
+![screen-shot-2020-06-08-at-5 20 59-pm](https://user-images.githubusercontent.com/74428638/218548531-f21faba7-bebe-41f1-9b71-8fd1499f333c.png)
+![screen-shot-2020-06-08-at-5 21 18-pm](https://user-images.githubusercontent.com/74428638/218548554-4de1c16d-fa47-45a0-ad13-7f2f74495441.png)
+
 ## Getting Started
 
 1. Clone the project to your local machine.
